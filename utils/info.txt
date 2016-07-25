@@ -1,0 +1,2 @@
+This folder has tools and helper functions called by core routines.
+Code developed by F.Roux 2012-2016
