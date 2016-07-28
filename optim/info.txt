@@ -1,2 +1,8 @@
-Core routines for gradient optimization.
-Developed by F.Roux and B. Armstrong 2012-2016
+# Core routines for gradient optimization.
+# Developed by F.Roux and B. Armstrong 2012-2016
+
+# calibration_thresholds_BCN_data_16_June_2016.m -> runs the threshold calibration for the BCN data
+# calibration_thresholds_SayWhen_data_16_June_2016.m -> runs the threshold calibration for the SW data
+# compare_test_train_error_between_optims.m -> script to compare the train and test error for different optimizations
+# ds_comparison.m -> mixed model implementation
+# master_optim_Jun2016.m -> master script that calls calibration_thresholds_BCN_data_16_June_2016 and calibration_thresholds_SayWhen_data_16_June_2016

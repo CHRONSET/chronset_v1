@@ -1,16 +1,30 @@
-function adm_optimJ18(f,Nper,nworker,lf,m)
-%%
+function calibration_thresholds_SayWhen_data_16_June_2016(f,Nper,nworker,lf)
+
+%%  calibration_thresholds_SayWhen_data_16_June_2016(f,Nper,nworker,lf)
+%
+% Input: f 		- flag for paralell profile (default =1), must be either 0 (use local profile) or 1 (use nworker)
+%	 Nper		- number of trials for each optimization (default = 350)
+%	 nworker	- number of worker to be used
+%	 lf		- loop factor, number of total optimization attempts = nworker*lf
+%
+% Ouput: optim_data 	- function returns structure with results of optimization
+%
+% code initially developed by Fred Roux aka FRO ( Univ. of Birmingham ) and Blair Armstrong aka BAR, June 2016
+
+%% DEFAULTS
 if nargin == 0
-    Nper = 350;% number of optim iterations
+    Nper = 500;% number of optim iterations
     f = 1;
-    nworker = 128;
+    nworker = 12;%128;%number of partitions
     lf = 1;
     m = 'new';
 end;
-%%
+
+%% PATH SETTINGS
 restoredefaultpath;
 addpath(genpath('~/froux/chronset/'));
-%%
+
+%% PARPOOL SETTINGS
 if f ==1
     if matlabpool('size')==0
         matlabpool(nworker);%128;%128
@@ -20,29 +34,33 @@ elseif f ==0
         matlabpool local;
     end;
 end;
-%%
+
+%% READ THE MANUAL RATINGS SAYWHEN
 [data,txt,raw] = xlsread('~/froux/chronset/data/SayWhen/manual_ratings_SayWhen.xls');
 raw(1,:) = [];
 txt(1,:) = [];
-% %%
-% data([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-% txt([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-% raw([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-%%
-[del_idx] = find(strcmp(raw(:,2),'..wav'));
+
+%% DELETE PROBLEMATIC FILES
+data([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+txt([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+raw([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+
+[del_idx] = find(strcmp(raw(:,2),'..wav'));% files with bad file name
 raw(del_idx,:) = [];
 txt(del_idx,:) = [];
 data(del_idx,:) = [];
-%%
-[del_idx] = [find(isnan(data(:,5)));find(isnan(data(:,6)));find(isnan(data(:,7)));find(isnan(data(:,8)));find(isnan(data(:,9)))];
+
+[del_idx] = [find(isnan(data(:,5)));find(isnan(data(:,6)));find(isnan(data(:,7)));find(isnan(data(:,8)));find(isnan(data(:,9)))];%files with NaNs
 raw(del_idx,:) = [];
 txt(del_idx,:) = [];
 data(del_idx,:) = [];
-%%
+
+%% SINGULAR VALUE DECOMPOSITION
 dum= data(:,[5:9]);
 [U,S,V] = svd(dum(:,[1,2,4]));
 pred = U(:,1)*S(1,1)*V(:,1)';
-%%
+
+%% SWITCH BETWEEN ORIGINAL AND NEW FEATURE-DATA FORMAT
 switch m
     case 'orig'
         path2featfiles = '~/froux/chronset/data/SayWhen/feature_data/';
@@ -50,6 +68,7 @@ switch m
         path2featfiles = '~/froux/chronset/data/SayWhen/feature_data/Jun2016/';
 end;
 
+%% FILE IDs
 ID = {txt{:,3}};
 trl_n = [raw{:,4}];
 
@@ -67,14 +86,23 @@ for jt = 1:length(ID)
             chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'.mat']);
             [id] = [raw{jt,3},'.',num2str(raw{jt,4}),'.mat']; 
         case 'new'
-            chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'_*Jun-2016.mat']);    
-            [id] = [raw{jt,3},'.',num2str(raw{jt,4}),'_',chck.date(1:11),'.mat'];            
+            chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'_*Jun-2016.mat']);
+            %chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'*.mat']);
+            if sign(length(chck)-1)==1
+                return;
+            end;
+            if ~isempty(chck)
+                d = chck.name([regexp(chck.name,'_')+1:regexp(chck.name,'.mat')-1]);
+                [id] = [raw{jt,3},'.',num2str(raw{jt,4}),'_',d,'.mat'];
+            end;
     end;  
     
-    if ~isempty(chck) && strcmp(id,chck.name)
-        k = k+1;
-        ID2(k) = ID(jt);
-        sel_idx(k) = jt;
+    if ~isempty(chck)
+        if strcmp(id,chck.name)
+            k = k+1;
+            ID2(k) = ID(jt);
+            sel_idx(k) = jt;
+        end;
     end;
 end;
 if isempty(ID2)
@@ -100,14 +128,15 @@ for jt = 1:length(sel_idx)
         case 'new'
             chck = dir([path2featfiles,raw{sel_idx(jt),3},'.',num2str(raw{sel_idx(jt),4}),'_*.mat']);
             id = chck.name;
-            id2 = [ID2{jt},'.',num2str(trl_n(jt)),'_',chck.date(1:11),'.mat'];
+            d = chck.name([regexp(chck.name,'_')+1:regexp(chck.name,'.mat')-1]);
+            id2 = [ID2{jt},'.',num2str(trl_n(jt)),'_',d,'.mat'];
     end;
     
     if ~strcmp(id,id2) 
         error('file assignment does not match');
     end;
 end;
-% %%
+%%
 switch m
     case 'new'
         o1 = load([path2featfiles,'origID.mat']);
@@ -127,7 +156,6 @@ parfor jt = 1:length(ID2)
             chck = dir([path2featfiles,ID2{jt},'.',num2str(trl_n(jt)),'_*.mat']);
             dum = load([path2featfiles,chck.name]);
             dat(jt,:,:) = [{0} dum.savedata(1,2);{0} dum.savedata(2,2)];
-            % .01 500 .01 750 .013 500 .013 750
             
 %             dat(jt,1,1) = dum.savedata(1,1);
 %             dat(jt,1,2) = dum.savedata(1,2);
@@ -162,8 +190,8 @@ if ( f == 1 )
     itresh{6} = .1;%goodness of pitch
     
     %%added June 13 2016
-    itresh{7}  = .001;%syl length
-    itresh{8}  = 3;%number of simult active features
+    itresh{7}  = .005;%syl length
+    itresh{8}  = 4;%number of simult active features
     
     itresh{9} = 1;%sliding window size
     itresh{10} = 2;%smoothing
@@ -216,7 +244,7 @@ if ( f == 1 )
             %added June 13 2016
             if sign(length(itresh)-6) ==1
                 
-                param_space{7}      = [.001 .05];
+                param_space{7}      = [.005 .05];
                 param_space{8}      = [3    5];                
                 param_space{9}  = [1   2];
                 param_space{10}  = [2   2];
@@ -657,7 +685,7 @@ optim_data.ei_training = ei_training;clear ei_training;
 % initial mle for test data
 optim_data.ei_test = ei_test;clear ei_test;
 %%
-path2files = '/bcbl/home/home_a-f/froux/chronset/optim/adm_Jun18/';
+path2files = '/bcbl/home/home_a-f/froux/chronset/thresholds/';
 save([path2files,'greedy_optim_NP_data_SayWhen_',date,'.mat'],'optim_data');
 %%
 matlabpool('close');

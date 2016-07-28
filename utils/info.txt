@@ -1,2 +1,21 @@
-This folder has tools and helper functions called by core routines.
-Code developed by F.Roux 2012-2016
+#This folder has tools and helper functions called by core routines.
+#Code developed by F.Roux 2012-2016
+
+#compare_models.m -> compares mixed expert models with unique expert approach
+#compute_feature_data_correlation.m -> assess the correlation between different features
+#compute_feature_rank_order.m -> ranking of features 
+#compute_features_additional_BCNdata_Exp1.m -> helper script 
+#compute_features_all.m -> helper script (needs to be updated)
+#compute_features_BCN.m -> computes the features for BCN data
+#compute_features_SayWhen.m -> computes the features for SayWhen
+#compute_pct_trial.m -> returns a normalized histogram with specified bin sizes
+#compute_slope_parameters4onsets.m -> script that computes slope parameters of onset regression fit
+#make_absD_histo.m -> make a histogram of absolute difference scores 
+#monte_carlo_simulation_samples_size_vs_tstat.m -> computes a monte-carlo simulation to assess effect of SD on effect sizes
+#readout_manual_ratings_additionalBCNdata.m -> helper script to compute manual ratings on additional BCN data
+#read_phono_coding_info.m -> reads the phonological coding for different onsets
+#recode_SAdata.m -> helper function to do file name recoding
+#save_parfor.m -> helper function to save data in parfor loops
+#simulate_regression_residuals_vs_difference_scores.m -> a simulation used to illustrate the effect of inter-rater bias on absolute differences vs regression residuals
+#sort_params.m -> helper function to do regression pararmeter sorting, can be used with #compute_slope_parameters4onsets.m
+#wavread2.m -> wavread2 must be used to prevent a bug in wavread related to data format

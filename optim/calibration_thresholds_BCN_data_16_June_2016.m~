@@ -1,22 +1,40 @@
-%%
+function calibration_thresholds_BCN_data_16_June_2016(f,Nper,nworker,lf,m)
+
+%% calibration_thresholds_BCN_data_16_June_2016(f,Nper,nworker,lf,m)
+%
+% Input: f 		- flag for paralell profile (default =1), must be either 0 (use local profile) or 1 (use nworker)
+%	 Nper		- number of trials for each optimization (default = 350)
+%	 nworker	- number of worker to be used
+%	 lf		- loop factor, number of total optimization attempts = nworker*lf
+%	 m		- mode, must be 'new' (default) or 'orig'	
+%
+% Ouput: optim_data 	- function returns structure with results of optimization
+%
+% code initially developed by Fred Roux aka FRO ( Univ. of Birmingham ) and Blair Armstrong aka BAR, June 2016
+
+%% DEFAULTS
+if nargin == 0
+    Nper = 500;% number of optim iterations
+    f = 1;
+    nworker = 32;
+    lf = 8;
+end;
+
+%% PATH SETTINGS
 restoredefaultpath;
 addpath(genpath('/bcbl/home/home_a-f/froux/chronset/'));
-%% init workspace
-clear;
-clc;
-close all;
-%%
-Nper = 500;% number of optim iterations
-f = 1;
+
+%% PARALLEL POOL
 if f == 1
     if matlabpool('size') ==0
-        matlabpool 128;% number of training vs test partitions
+        matlabpool(nworker);% number of training vs test partitions
     end;
 else
     if matlabpool('size') ==0
         matlabpool local;
     end;
 end;
+
 %% read in the manual scores
 path2files = '/bcbl/home/home_a-f/froux/chronset/data/BCN/';
 
@@ -49,7 +67,6 @@ parfor it = 1:length(fc2)
     ID{it} = [pc{it},'_',num2str(fc2(it)),'.WAV'];
 end;
 
-
 [sel_idx] = zeros(length(ID),1);
 parfor it = 1:length(ID)
     file_name = dir([path2files,ID{it}]);
@@ -62,8 +79,9 @@ end;
 if (length(sel_idx) ~= length(pc)) || (length(sel_idx) ~= length(fc2)) || length(sel_idx) ~= length(Y)
     error('Wrong number of files');
 end;
+
 %% generate ID information
-path2files = '/bcbl/home/home_a-f/froux/chronset/data/BCN/feature_data/';
+path2files = '/bcbl/home/home_a-f/froux/chronset/data/BCN/feature_data/Jun2016/';
 ID2 = cell(length(fc2),1);
 parfor it = 1:length(fc2)
      fn = dir([path2files,pc{it},'_',num2str(fc2(it)),'*-Jun-2016.mat']);
@@ -83,6 +101,7 @@ end;
 if (length(sel_idx) ~= length(pc)) || (length(sel_idx) ~= length(fc2)) || (length(sel_idx) ~= length(Y))
     error('Wrong number of files');
 end;
+
 %%
 chck = zeros(length(ID2),1);
 parfor it = 1:length(ID2)
@@ -91,8 +110,9 @@ end;
 if sum(chck) ~= length(ID2)
     error('number of files does not match');
 end;
+
 %%
-path2files = '/bcbl/home/home_a-f/froux/chronset/data/BCN/feature_data/';
+path2files = '/bcbl/home/home_a-f/froux/chronset/data/BCN/feature_data/Jun2016/';
 
 dat = cell(length(ID2),2,2);
 k = 0;
@@ -104,13 +124,14 @@ parfor it = 1:length(ID2)
     
 end;
 clear dum;
+
 %%
 % number of partitions training vs test
 if f ==1
-    Ntrl = matlabpool('size')*1;
+    Ntrl = matlabpool('size')*lf;
     
     %starting values for thresholds
-    itresh = cell(11,1);
+    itresh = cell(10,1);
     itresh{1} = .1;%amplitude
     itresh{2} = .9;%wiener entropy
     itresh{3} = .1;%spectral change
@@ -118,7 +139,7 @@ if f ==1
     itresh{5} = .9;%frequency modulation
     itresh{6} = .1;%goodness of pitch
     
-%     %added June 13 2016
+    % added June 13 2016
     itresh{7}  = .035;%syl length
     itresh{8}  = 4;%number of simult active features
     
@@ -146,7 +167,7 @@ if f ==1
     %omega parameters
     omega_orig1 = 0.05*ones(6,1);
     if sign(length(itresh)-6) ==1
-        omega_orig1(7:10) = [itresh{7:11}];
+        omega_orig1(7:10) = [itresh{7:10}];
     end;
     
     omega_scale = 1;

@@ -1,5 +1,17 @@
-function calibration_thresholds_SayWhen_data_16_June_2016(f,Nper,nworker,lf,m)
-%%
+function calibration_thresholds_SayWhen_data_16_June_2016(f,Nper,nworker,lf)
+
+%%  calibration_thresholds_SayWhen_data_16_June_2016(f,Nper,nworker,lf)
+%
+% Input: f 		- flag for paralell profile (default =1), must be either 0 (use local profile) or 1 (use nworker)
+%	 Nper		- number of trials for each optimization (default = 350)
+%	 nworker	- number of worker to be used
+%	 lf		- loop factor, number of total optimization attempts = nworker*lf
+%
+% Ouput: optim_data 	- function returns structure with results of optimization
+%
+% code initially developed by Fred Roux aka FRO ( Univ. of Birmingham ) and Blair Armstrong aka BAR, June 2016
+
+%% DEFAULTS
 if nargin == 0
     Nper = 500;% number of optim iterations
     f = 1;
@@ -7,10 +19,12 @@ if nargin == 0
     lf = 1;
     m = 'new';
 end;
-%%
+
+%% PATH SETTINGS
 restoredefaultpath;
 addpath(genpath('~/froux/chronset/'));
-%%
+
+%% PARPOOL SETTINGS
 if f ==1
     if matlabpool('size')==0
         matlabpool(nworker);%128;%128
@@ -20,29 +34,33 @@ elseif f ==0
         matlabpool local;
     end;
 end;
-%%
+
+%% READ THE MANUAL RATINGS SAYWHEN
 [data,txt,raw] = xlsread('~/froux/chronset/data/SayWhen/manual_ratings_SayWhen.xls');
 raw(1,:) = [];
 txt(1,:) = [];
-% %%
-% data([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-% txt([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-% raw([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
-%%
-[del_idx] = find(strcmp(raw(:,2),'..wav'));
+
+%% DELETE PROBLEMATIC FILES
+data([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+txt([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+raw([210,218,221,370,397,429,433,470,619,1320,1783,1956,2010,3039,3141,3193,3664,4191,4290,4840],:)=[];
+
+[del_idx] = find(strcmp(raw(:,2),'..wav'));% files with bad file name
 raw(del_idx,:) = [];
 txt(del_idx,:) = [];
 data(del_idx,:) = [];
-%%
-[del_idx] = [find(isnan(data(:,5)));find(isnan(data(:,6)));find(isnan(data(:,7)));find(isnan(data(:,8)));find(isnan(data(:,9)))];
+
+[del_idx] = [find(isnan(data(:,5)));find(isnan(data(:,6)));find(isnan(data(:,7)));find(isnan(data(:,8)));find(isnan(data(:,9)))];%files with NaNs
 raw(del_idx,:) = [];
 txt(del_idx,:) = [];
 data(del_idx,:) = [];
-%%
+
+%% SINGULAR VALUE DECOMPOSITION
 dum= data(:,[5:9]);
 [U,S,V] = svd(dum(:,[1,2,4]));
 pred = U(:,1)*S(1,1)*V(:,1)';
-%%
+
+%% SWITCH BETWEEN ORIGINAL AND NEW FEATURE-DATA FORMAT
 switch m
     case 'orig'
         path2featfiles = '~/froux/chronset/data/SayWhen/feature_data/';
@@ -50,6 +68,7 @@ switch m
         path2featfiles = '~/froux/chronset/data/SayWhen/feature_data/Jun2016/';
 end;
 
+%% FILE IDs
 ID = {txt{:,3}};
 trl_n = [raw{:,4}];
 
@@ -137,7 +156,6 @@ parfor jt = 1:length(ID2)
             chck = dir([path2featfiles,ID2{jt},'.',num2str(trl_n(jt)),'_*.mat']);
             dum = load([path2featfiles,chck.name]);
             dat(jt,:,:) = [{0} dum.savedata(1,2);{0} dum.savedata(2,2)];
-            % .01 500 .01 750 .013 500 .013 750
             
 %             dat(jt,1,1) = dum.savedata(1,1);
 %             dat(jt,1,2) = dum.savedata(1,2);
@@ -244,11 +262,11 @@ if ( f == 1 )
             on1 = zeros(length(dat),1);
             if sign(nfeat-6)==1
                 for it = 1:length(dat)
-                    [on1(it)] =  detect_speech_on_and_offset_orig2(dat{it,itresh{9},itresh{10}},itresh);
+                    [on1(it)] =  detect_speech_on_and_offset(dat{it,itresh{9},itresh{10}},itresh);
                 end;
             else
                 for it = 1:length(dat)
-                    [on1(it)] =  detect_speech_on_and_offset_orig2(dat{it,1,1},[itresh{:} {.035} {4}]);
+                    [on1(it)] =  detect_speech_on_and_offset(dat{it,1,1},[itresh{:} {.035} {4}]);
                 end;
             end;
             
@@ -320,11 +338,11 @@ if ( f == 1 )
                     on_a = zeros(length(dat),1);
                     if sign(nfeat-6)==1
                         for it = 1:length(dat)
-                            [on_a(it)] =  detect_speech_on_and_offset_orig2(dat{it,temp1{9},temp1{10}},temp1);
+                            [on_a(it)] =  detect_speech_on_and_offset(dat{it,temp1{9},temp1{10}},temp1);
                         end;
                     else
                         for it = 1:length(dat)
-                            [on_a(it)] =  detect_speech_on_and_offset_orig2(dat{it,1,1},[temp1{:} {.035} {4}]);
+                            [on_a(it)] =  detect_speech_on_and_offset(dat{it,1,1},[temp1{:} {.035} {4}]);
                         end;
                     end;
                     
@@ -368,11 +386,11 @@ if ( f == 1 )
                     on_b = zeros(length(dat),1);
                     if sign(nfeat-6)==1
                         for it = 1:length(dat)
-                            [on_b(it)] =  detect_speech_on_and_offset_orig2(dat{it,temp2{9},temp2{10}},temp2);
+                            [on_b(it)] =  detect_speech_on_and_offset(dat{it,temp2{9},temp2{10}},temp2);
                         end;
                     else
                         for it = 1:length(dat)
-                            [on_b(it)] =  detect_speech_on_and_offset_orig2(dat{it,1,1},[temp2{:} {.035} {4}]);
+                            [on_b(it)] =  detect_speech_on_and_offset(dat{it,1,1},[temp2{:} {.035} {4}]);
                         end;
                     end;
                     
@@ -500,7 +518,7 @@ else
         on1 = zeros(length(dat),1);
         parfor it = 1:length(dat)
             [on1(it)] =  detect_speech_on_and_offset(dat{it},itresh,mY1(it));
-            %[on1(it)] =  detect_speech_on_and_offset_orig2(dat{it},itresh);
+            %[on1(it)] =  detect_speech_on_and_offset(dat{it},itresh);
         end;
         
         %         if any(isnan(on1))
@@ -553,7 +571,7 @@ else
                 on_a = zeros(length(dat),1);
                 parfor it = 1:length(dat)
                     [on_a(it)] =  detect_speech_on_and_offset(dat{it},temp1,mY1(it));
-                    %[on_a(it)] =  detect_speech_on_and_offset_orig2(dat{it},temp1);
+                    %[on_a(it)] =  detect_speech_on_and_offset(dat{it},temp1);
                 end;
                 
                 %                 if any(isnan(on_a))
@@ -577,7 +595,7 @@ else
                 on_b = zeros(length(dat),1);
                 parfor it = 1:length(dat)
                     [on_b(it)] =  detect_speech_on_and_offset(dat{it},temp2,mY1(it));
-                    %[on_b(it)] =  detect_speech_on_and_offset_orig2(dat{it},temp2);
+                    %[on_b(it)] =  detect_speech_on_and_offset(dat{it},temp2);
                     
                 end;
                 

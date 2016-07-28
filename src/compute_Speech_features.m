@@ -1,10 +1,9 @@
-function [features,syl_seg] = compute_Speech_features(feat_data)
+function [features,syl_seg] = compute_Speech_features_orig(feat_data)
 %% indexes for frequencies of interest
 freq_sel_idx = 1:length(feat_data.f);%find(feat_data.f > 50);
 %% amplitude in dB - feature #1
-%[amp] = 20*log10(feat_data.s+1);
-[amp] = 20*log10(feat_data.s+1+eps);
-[amp] = sum(amp,2);
+[amp] = 20*log10(feat_data.s+1);
+[amp] = max(amp,[],2);
 %% wiener entropy - feature # 2
 N = length(feat_data.f);
 a = exp(1/N*sum(log(feat_data.s(:,freq_sel_idx)),2));
@@ -17,11 +16,12 @@ T = max(x)/100*5;
 [dfdt] = x.*(x>T); 
 %% amplitude modulation (AM) - feature # 4
 [am] = squeeze(sum(feat_data.ds(1,:,freq_sel_idx).^2,3));%overall time derivative spower -> positive at beginning of sounds & negative at the end of sounds
+[am] = abs(am);
 %% frequency modulation (FM) - feature # 5
 fm = atan(max(feat_data.ds(1,:,:).^2,[],3)./max(feat_data.ds(2,:,:).^2,[],3));
 %% goodness of pitch - feature #6
-C = log(abs(fft(squeeze(feat_data.ds(2,:,:)),[],2)).^2)+log(abs(fft(squeeze(feat_data.ds(1,:,:)),[],2)).^2);
-[goP] = max(C,[],2);
+C = log(abs(fft(squeeze(feat_data.ds(2,:,:)),[],2)).^2);
+[goP] = mean(C,2);
 %% prepare feature data for output
 features =cell(6,1);
 features{1} = amp;%amplitude

@@ -1,2 +1,12 @@
-folder with core routines
-developed by F.Roux 2012-2016
+#folder with core routines
+#developed by F.Roux 2012-2016
+
+
+#apply_smoothing2features.m -> this routine is for smoothing feature data in time
+#chronset_demo.m -> a demo file (needs to be updated)
+#compute_feat_data.m -> master script that launches spectral analysis and computes the features that are used for speech onset detection
+#compute_goodness_of_pitch.m -> GOD extraction (function is depreciated and not longer used by current version of chronset)
+#compute_Speech_features.m -> core routine that computes speech features, called by compute_feat_data.m
+#compute_treshold_xing.m -> detection of threshold crossings
+#detect_speech_on_and_offset.m -> routine that permforms speech on and offset detection
+#syllabel_counter.m -> count vocal units
