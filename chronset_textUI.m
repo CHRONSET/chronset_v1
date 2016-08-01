@@ -18,9 +18,10 @@ function [on] = chronset_textUI()
 %          2) a txt file is saved to disc to either the default path or a
 %          path specified by the user
 %              
-%
-% F.Roux, University of Birmingham, Jul 2016
-	
+%Code intially developed by:
+% F.Roux, University of Birmingham
+% B, Armstrong, University of Torronto	
+% Aug 2016
 
 %% set the path to the default chronset folder
 restoredefaultpath;
