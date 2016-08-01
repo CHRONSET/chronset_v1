@@ -1,0 +1,12 @@
+% chronset inventory
+#data -> folder with data: contains data for demo and may contain raw_data as well
+#external -> external toolboxes used by Chronset, ie Chronux
+#figures -> folder with figure materials
+#optim -> folder contains routines used for optimization
+#README.md -> chronset README file with installation instructions !!!
+#src -> core routines used by chronset
+#thresholds -> folder with optimized thresholds
+#utils -> folder with mostly helper routines called by core routines
+#visualize -> scripts for visualization
+#Chronset_flowchart.pdf ->flowchart explaining the basic algorithm pipeline
+#chronset_textUI.m -> a text based user interface that permits to run automatic onset detection

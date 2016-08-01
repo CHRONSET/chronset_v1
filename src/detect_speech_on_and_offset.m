@@ -1,4 +1,4 @@
-function [on,off,feat_data] =  detect_speech_on_and_offset_orig2(feat_data,tresh)
+function [on,off,feat_data] =  detect_speech_on_and_offset(feat_data,tresh)
 % %%
 % tresh = cell(length(feat_data.features),1);
 % tresh{1} = 5e-3;%amplitude
@@ -10,8 +10,8 @@ function [on,off,feat_data] =  detect_speech_on_and_offset_orig2(feat_data,tresh
 
 % new features for optim add June 13 2016
 % tresh{7}  word length
-% thresh{8} sylable length
-% thres{9} number of simultaneous features
+% thresh{8} number of simultaneous features
+% thres{9} sylable length
 %%
 feat_data.t = feat_data.t.*1000;
 tresh{7} = [tresh{7}.*1000];
@@ -47,11 +47,11 @@ end;
 if isempty(xidx_n)
     xidx_n = length(feat_data.t);
 end;
-%%
+%% FIXME
 % xidx_n(feat_data.t(xidx_p)<250) = [];
 % xidx_p(feat_data.t(xidx_p)<250) = [];
 %% syllable segmentation
-syl_sig = sign(feat_data.syl_seg.*(abs(feat_data.syl_seg)>=0.25));
+syl_sig = sign(feat_data.syl_seg.*(abs(feat_data.syl_seg)>=0.25));% FIXME thres{9} 
 syl_idx = find(abs(syl_sig) >=1);
 syl_sig_2tresh = zeros(1,length(feat_data.syl_seg));
 syl_sig_2tresh(syl_idx) =1;

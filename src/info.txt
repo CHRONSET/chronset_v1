@@ -10,3 +10,4 @@
 #compute_treshold_xing.m -> detection of threshold crossings
 #detect_speech_on_and_offset.m -> routine that permforms speech on and offset detection
 #syllabel_counter.m -> count vocal units
+#chronset_extract_thresholds.m -> extracts the thresholds based on the findings reported by Roux et al. (2016) 
