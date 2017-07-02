@@ -1,11 +1,11 @@
 %% set the MATLAB path
 restoredefaultpath;
-addpath('/Volumes/home/home_a-f/froux/fieldtrip-20130721/');
+addpath('C:/fieldtrip-20170619');
 %addpath('/home/froux/froux/fieldtrip-20130721/');
 ft_defaults;
 %%
 %path2files = ['/bcbl/data/BEHAVIOUR/BBR_BEH/DATA/Bilingual_Picture_Naming/01_itzal/'];
-path2files = ['/Users/froux/Downloads/Converted videos and stripped audios/'];
+path2files = ['../demo2/'];
 files = dir([path2files,'*.wav']);
 %%
 % run through the files

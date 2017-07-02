@@ -1,6 +1,6 @@
 function visualize_speechfeatures(feat_data,features,finf)
 %%
-load('/bcbl/home/home_a-f/froux/BilingualNamingExp/results/Colormap_spectrogram.mat');
+%load('/bcbl/home/home_a-f/froux/BilingualNamingExp/results/Colormap_spectrogram.mat');
 %%
 feat_data.t = feat_data.t*1000;
 feat_data.tAx = feat_data.tAx.*1000;

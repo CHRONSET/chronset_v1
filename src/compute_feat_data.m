@@ -71,6 +71,16 @@ end;
 %% normalize speeach features to 0-1 range
 for it = 1:length(feat_data.features)
     
-    feat_data.features{it} = (feat_data.features{it} -min(feat_data.features{it}))./(max(feat_data.features{it})-min(feat_data.features{it}));
+    %June 2017, bca: Fixing out of bounds errors that appear linked to
+    %inf/-inf values, particularly in harmonic pitch.
+    minv = min(feat_data.features{it}(isfinite(feat_data.features{it})));
+    maxv = max(feat_data.features{it}(isfinite(feat_data.features{it})));
+    
+    %Replace the values where A==-inf with the minimum real number.
+    feat_data.features{it}(feat_data.features{it}==-inf) = minv;
+    %Replace the values where A==+inf with the maximum real number.
+    feat_data.features{it}(feat_data.features{it}==inf)  = maxv;
+
+    feat_data.features{it} = (feat_data.features{it} -minv )./(maxv-minv);
     
 end;

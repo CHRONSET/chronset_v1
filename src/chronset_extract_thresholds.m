@@ -17,5 +17,6 @@ thresh = cell(size(optim_data.hist_t,3),1);
 for it = 1:length(thresh)
     thresh{it} = squeeze(optim_data.hist_t(i1,i2,it));
 end;
-fprintf(['\n']);
-fprintf(['\n']);
+fprintf('\n');
+fprintf('\n');
+fprintf('%f\n', thresh{:});
