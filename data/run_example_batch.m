@@ -1,0 +1,1 @@
+chronset_batch('./data/wav_file_example/','./data/results.txt')

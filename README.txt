@@ -27,3 +27,10 @@ Once the application is compiled, you can run it with:
 ./run_chronset_batch.sh /opt/matlab/MATLAB_Compiler_Runtime/v80/ ~/barmstrong/Chronset_input/  ~/output.txt
 
 Updating the location of the wav files, output file, and MCR as appropriate.
+
+
+RUNNING AS BATCH JOB:
+
+If you are running on your local machine and have configured the pathing correctly, you should be able to run a command like the following to process a batch of files:
+
+chronset_batch('./DIR_CONTAINING_ONLY_WAVS/', './OUTPUTOFCHRONSET.txt')

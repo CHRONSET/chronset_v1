@@ -37,7 +37,14 @@ try
         disp(['File name being processed: ' fileList(i).name]);
 
         in = struct;
-        [in.wav,in.FS] = wavread2([input_folder '/' fileList(i).name]);
+        try
+            [in.wav,in.FS] = wavread2([input_folder '/' fileList(i).name]);
+        catch ME
+            [in.wav,in.Fs] = audioread([input_folder '/' fileList(i).name]);
+        end
+    
+            
+        %[in.wav,in.FS] = wavread2([input_folder '/' fileList(i).name]);
         in.wav = in.wav(:,1);
         [feat_data] = compute_feat_data([],in);
         [on] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);

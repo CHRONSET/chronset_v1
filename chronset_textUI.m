@@ -25,7 +25,7 @@ function [on] = chronset_textUI()
 
 %% set the path to the default chronset folder
 restoredefaultpath;
-if isunix
+if isunix || ismac
 	chrondir = dir('/usr/local/chronset/');
 	if isempty(chrondir)
 		error('search fro chronset in /usr/local/ failed. please consult README.txt');
@@ -65,7 +65,15 @@ tt = tic;
 for it = 1:length(FILENAME)
     in = struct;
     fprintf('computing file\n');
-    [in.wav,in.FS] = wavread2([LOAD_PATHNAME,FILENAME{it}]);
+    
+    %added try catch to enable compatibility between older and newer
+    %versions of matlab.  
+    try
+        [in.wav,in.FS] = wavread2([LOAD_PATHNAME,FILENAME{it}]);
+    catch ME
+        [in.wav,in.Fs] = audioread([LOAD_PATHNAME,FILENAME{it}]);
+    end
+        
     
     %% compute speech features
     
