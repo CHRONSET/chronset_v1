@@ -11,7 +11,7 @@ function chronset_batch(input_folder,output_file)
 %write any errors to output_file rather than dying quietly
 
 
-nWorkers = 1; % number of parallel workers
+nWorkers = 6; % number of parallel workers
 
 
 %% Load Optimized Thresholds %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
