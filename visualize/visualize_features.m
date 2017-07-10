@@ -5,7 +5,7 @@ addpath('C:/fieldtrip-20170619');
 ft_defaults;
 %%
 %path2files = ['/bcbl/data/BEHAVIOUR/BBR_BEH/DATA/Bilingual_Picture_Naming/01_itzal/'];
-path2files = ['../demo2/'];
+path2files = ['../data/NanFix/'];
 files = dir([path2files,'*.wav']);
 %%
 % run through the files

@@ -1,4 +1,4 @@
-function plot_speech_features(feat_data)
+function plot_speech_features(feat_data, thresh)
 %%
 feat_data.t = feat_data.t.*1000;
 feat_data.t = round(feat_data.t);
@@ -10,6 +10,9 @@ for it = 1:length(feat_data.features)
     a(it) = gca;
     hold on;
     plot(feat_data.t,feat_data.features{it},'k-','LineWidth',3);
+    %disp(xlim);
+    %disp(thresh(it)[1]);
+    plot( xlim, [thresh{it}(1) thresh{it}(1)] )
     %plot([min(feat_data.t) max(feat_data.t)],[feat_data.finf.tresh{it} feat_data.finf.tresh{it}],'r--','LineWidth',3);
     axis tight;
     
