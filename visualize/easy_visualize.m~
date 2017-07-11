@@ -3,7 +3,7 @@ function easy_visualize()
 %should only contain a single file to process in input folder.  
 %write any errors to output_file rather than dying quietly
 
-input_folder = '/export/home/barmstrong/barmstrong/agnesa/UCDavis_onefile/'
+input_folder = '../data/NanFix/../data/NanFix/'
 
 %% Load Optimized Thresholds %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
