@@ -64,8 +64,6 @@ try
         end
 
         if ~isempty(sig(sig~=0))
-            %20 percentile seems enough noise to avoid NaNs due to
-            %singularity
             qt = quantile(sig(sig~=0),0.2);
         else
             qt = 0.01;
@@ -84,6 +82,9 @@ try
 
         rts(i) = {[fileList(i).name, '	', num2str(round(on))]};
 
+        disp('Current progress: ');
+        disp(nf-3);
+        disp(sum(~cellfun(@isempty,rts)));
         
     end;
 
