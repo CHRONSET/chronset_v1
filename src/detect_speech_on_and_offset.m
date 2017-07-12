@@ -189,19 +189,44 @@ if ~isempty(xidx_p)
             
         end;
         
-        sel_idx = zeros(length(seg.idx));
-        k = 0;
-        ref = min(xidx_p):max(xidx_n);
-        for mt = 1:length(seg.idx)
-            if any(ismember(seg.idx{mt},ref))
-                k = k+1;
-                sel_idx(k) = mt;
-            end;
-        end;
-        sel_idx(k+1:end) = [];
         
-        on_idx = min([seg.idx{sel_idx}]);
-        off_idx = max([seg.idx{sel_idx}]);
+        if length(seg.idx) > 1 || length(seg.idx) < length(tresh_sig)
+         
+            sel_idx = zeros(length(seg.idx));
+            k = 0;
+            ref = min(xidx_p):max(xidx_n);
+            for mt = 1:length(seg.idx)
+                if any(ismember(seg.idx{mt},ref))
+                    k = k+1;
+                    sel_idx(k) = mt;
+                end;
+            end;
+            sel_idx(k+1:end) = [];
+            
+            on_idx = min([seg.idx{sel_idx}]);
+            off_idx = max([seg.idx{sel_idx}]);
+            
+        
+        else
+            disp('Warning: Only one segment detected.  This can happen, e.g., if you have a couple of bands of sound (e.g., line noise) in your recording. Estimates should be used with caution.')
+            sel_idx = zeros(length(seg.idx));
+            k = 0;
+            ref = min(xidx_p):max(xidx_n);
+            for mt = 1:length(seg.idx{:})
+                if any(ismember(seg.idx{1}(mt),ref))
+                    k = k+1;
+                    sel_idx(k) = mt;
+                end;
+            end;
+            
+            
+            
+            sel_idx(k+1:end) = [];
+            
+            on_idx = min([seg.idx{1}(min(sel_idx))]);
+            off_idx = max([seg.idx{1}(max(sel_idx))]);
+        end;
+  
         %         on_idx = min(xidx_p);
         %         off_idx = max(xidx_n);                
         %%

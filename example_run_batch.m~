@@ -1,7 +1,9 @@
 chronset_batch('./data/wav_file_example/','./data/results.txt')
 
 
-chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans/','/bcbl/home/home_a-f/barmstrong/agnesa/Noise20.txt')
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans/','/bcbl/home/home_a-f/barmstrong/agnesa/Noise20_dev.txt')
+
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans_sample/','/bcbl/home/home_a-f/barmstrong/agnesa/dev2.txt')
 
 
 chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/UCDavis/','/bcbl/home/home_a-f/barmstrong/agnesa/davis.txt')
@@ -13,6 +15,10 @@ chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/UCDavis/','/bcbl/home/home
 it = 1;
 LOAD_PATHNAME = '/bcbl/home/home_a-f/barmstrong/agnesa/UCDavis/';
 FILENAME{it} = 'ISPC_B_V2-23-3Slide1-105.wav';
+
+LOAD_PATHNAME = '/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans/';
+FILENAME{it} = '/D+¬no rapide - avec feedback-10-1-ImageDeno-88.wav';
+
 load([chrondir,filesep,'thresholds',filesep,'greedy_optim_thresholds_BCN_final.mat']);
 
 [thresh] = chronset_extract_thresholds(optim_data);
@@ -58,4 +64,4 @@ end
 feat_data = feat_data;
 tresh = [thresh' {0.035} {4} {0.25}];
 
-%[on(it)] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);
+[on(it)] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);

@@ -80,7 +80,7 @@ try
         
         
         [feat_data] = compute_feat_data([],in);
-        [on] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);
+        [on] = detect_speech_on_and_offset_dev(feat_data,[thresh' {0.035} {4} {0.25}]);
 
         rts(i) = {[fileList(i).name, '	', num2str(round(on))]};
 
