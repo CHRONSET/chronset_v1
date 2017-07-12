@@ -29,8 +29,18 @@ tresh_idx = find(tresh_sig >= 1);
 tresh_sig_2tresh = zeros(1,length(tresh_sig));
 tresh_sig_2tresh(tresh_idx) =1;
 
+%override behaviour so that onset cannot be detected in first ~5 ms while
+% features are stabilizing from very extreme changes if there is a
+% discontinuity during early speech onset.
+
+%tresh_sig_2tresh(1:250) = 0;
+%disp(length(tresh_sig));
+
 xidx_p= find(diff(tresh_sig_2tresh)==1)+1;
 xidx_n = find(diff(tresh_sig_2tresh)==-1)+1;
+
+
+
 %% consistency check
 if isempty(xidx_p) && ~isempty(xidx_n)
     xidx_p = 1;
@@ -212,4 +222,11 @@ else
     %% apply correction factor for length of sliding window
     on = on-10;
     off = off+10;
+    
+    %onset can be less than zero if there is sudden burst of very strong
+    %changing activity at the very onset of the file where some estimates
+    %have not stabilized.  Return -1 for consistency in this case.  
+    if on < 0
+        on = -1;
+    end
 end;

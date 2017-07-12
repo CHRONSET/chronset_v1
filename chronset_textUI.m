@@ -73,7 +73,7 @@ for it = 1:length(FILENAME)
     try
         [in.wav,in.FS] = wavread2([LOAD_PATHNAME,FILENAME{it}]);
     catch ME
-        [in.wav,in.Fs] = audioread([LOAD_PATHNAME,FILENAME{it}]);
+        [in.wav,in.FS] = audioread([LOAD_PATHNAME,FILENAME{it}]);
     end
         
     in.wav = in.wav(:,1);

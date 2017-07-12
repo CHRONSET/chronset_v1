@@ -41,7 +41,7 @@ try
         try
             [in.wav,in.FS] = wavread2([input_folder '/' fileList(i).name]);
         catch ME
-            [in.wav,in.Fs] = audioread([input_folder '/' fileList(i).name]);
+            [in.wav,in.FS] = audioread([input_folder '/' fileList(i).name]);
         end
     
             
