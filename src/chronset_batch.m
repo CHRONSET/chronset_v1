@@ -14,7 +14,7 @@ fillEmpty = 1;
 
 figSaveDir = '/bcbl/home/home_a-f/barmstrong/agnesa/figs/';
 
-plotSpeechFeatures = 1;
+plotSpeechFeatures = 0;
 
 nWorkers = 12; % number of parallel workers
 
