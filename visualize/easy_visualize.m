@@ -1,4 +1,4 @@
-function easy_visualize()
+function easy_visualize(input_folder,output_folder)
 
 %should only contain a single file to process in input folder.  
 %write any errors to output_file rather than dying quietly

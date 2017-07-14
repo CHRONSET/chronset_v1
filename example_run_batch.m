@@ -8,8 +8,18 @@ chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans_sample/','/bcb
 
 chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/UCDavis/','/bcbl/home/home_a-f/barmstrong/agnesa/davis.txt')
 
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/input_fullset/',  '/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/chron_raw.txt');
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/output/',  '/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/chron_denoised.txt');
 
+%% Test generating batches of figs
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/agnesa_nans_sample/','/bcbl/home/home_a-f/barmstrong/agnesa/sample.txt')
 
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/output/',  '/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/chron_denoised_trim.txt');
+
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/output2/',  '/bcbl/home/home_a-f/barmstrong/agnesa/colinVaz_attempt2/mri-speech-denoising-master/chron_denoised_trim2.txt');
+
+%mohammed problems
+chronset_batch('/bcbl/home/home_a-f/barmstrong/agnesa/mohammed/',  '/bcbl/home/home_a-f/barmstrong/agnesa/mohammed.txt');
 
 %%%
 it = 1;

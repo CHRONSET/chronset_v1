@@ -75,44 +75,61 @@ for it = 1:length(FILENAME)
     catch ME
         [in.wav,in.FS] = audioread([LOAD_PATHNAME,FILENAME{it}]);
     end
-        
-    in.wav = in.wav(:,1);
-    %replace completely empty parts of a recording with low amount of noise
-    
-    if fillEmpty == 1
-        %lock random noise values for replication purposes.  
-        rng(1);
-        
-        sig = in.wav;
+   
+    if ~isempty(in.wav)        
+        in.wav = in.wav(:,1);
+        %replace completely empty parts of a recording with low amount of noise
 
-        if ~isempty(sig(sig~=0))
-            A = median(sig(sig~=0));
-        else
-            A = 0.01;
+        if fillEmpty == 1
+            %lock random noise values for replication purposes.  
+            rng(1);
+
+            sig = in.wav;
+
+            if ~isempty(sig(sig~=0))
+                A = median(sig(sig~=0));
+            else
+                A = 0.01;
+            end
+
+            if ~isempty(sig(sig~=0))
+                %20 percentile seems enough noise to avoid NaNs due to
+                %singularity
+                qt = quantile(sig(sig~=0),0.2);
+            else
+                qt = 0.01;
+            end
+
+            zlx = find(sig==0);
+
+            sig(zlx) = A +qt*randn(1,length(zlx));
+
+            in.wav = sig;
         end
 
-        if ~isempty(sig(sig~=0))
-            %20 percentile seems enough noise to avoid NaNs due to
-            %singularity
-            qt = quantile(sig(sig~=0),0.2);
-        else
-            qt = 0.01;
+
+        %% compute speech features
+        try
+            
+        [feat_data] = compute_feat_data([],in);
+
+        %% detect speech onset
+        [on(it)] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);
+        
+        catch ME
+                disp('Error processing file.  Chronset will try to continue crushing RTs...');
+                disp(getReport(ME));
+                [on(it)] = NaN;
         end
-
-        zlx = find(sig==0);
-
-        sig(zlx) = A +qt*randn(1,length(zlx));
-
-        in.wav = sig;
+            
+    else
+        disp('ERROR, detected empty file');
+        disp(FILENAME{it});
+        [on(it)] = NaN;
     end
     
+        
     
-    %% compute speech features
-    
-    [feat_data] = compute_feat_data([],in);
-    
-    %% detect speech onset
-    [on(it)] = detect_speech_on_and_offset(feat_data,[thresh' {0.035} {4} {0.25}]);
     
     %% write output textfile
     fid = fopen([SAVE_PATHNAME,filesep,FILENAME{it},'_onset.txt'],'w+');

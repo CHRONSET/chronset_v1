@@ -1,5 +1,9 @@
-function plot_speech_features(feat_data, thresh)
+function plot_speech_features(feat_data, thresh,saveDir,figName)
+%% use saveDir = "" if you do not want to save.
+
 %%
+
+
 feat_data.t = feat_data.t.*1000;
 feat_data.t = round(feat_data.t);
 figure;
@@ -34,3 +38,12 @@ title(a(3),'Spectral change','Fontsize',20);
 title(a(4),'Amplitude modulation','Fontsize',20);
 title(a(5),'Frequency modulation','Fontsize',20);
 title(a(6),'Harmonic pitch','Fontsize',20);
+
+%disp('attempting to write figure');
+if ~strcmp(saveDir,'')
+    %disp('writing figure');
+    %disp([saveDir,figName]);
+   saveas(gcf,[saveDir,figName]); 
+   close(gcf);
+    
+end
