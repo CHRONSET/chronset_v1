@@ -40,7 +40,7 @@ try
 
     %start at ind = 3 to avoid . and .. on the search path
     %parfor i = 3:nf
-    for i = 3:nf
+    parfor i = 3:nf
         %Disp is now within individual file call, later.
         %disp(['File name being processed: ' fileList(i).name]);
 
