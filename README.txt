@@ -15,8 +15,11 @@ COMPILING YOUR OWN VERSION:
 To compile the standalone for chronset:
 
 
+A pre-processed list of bundle files is available in m.bundle.txt.  If you receive errors below, you may need to rebuild the bundle.
+Instructions to do so follow.
+
 First, ensure that the bundle is up to date by running create__bundle.sh.
---you may need to trim out the make_linux.m, clean.m
+--you may need to trim out the make_linux.m, clean.m, and one version of wavread2.m (it does not matter which).
 --you may also ned to remove some of the monte carlo simulation functions for
 --computing t-tests, which are irrelevant to the batch file execution.
 
