@@ -34,17 +34,20 @@ end;
 
 %% PARPOOL SETTINGS
 if f ==1
-    if matlabpool('size')==0
-        matlabpool(nworker);%128;%128
-    end;
+   if matlabpool('size')==0
+       matlabpool(nworker);%128;%128
+   end;
 elseif f ==0
-    if matlabpool('size')==0
-        matlabpool local;
-    end;
+   if matlabpool('size')==0
+       matlabpool local;
+   end;
 end;
 
 %% READ THE MANUAL RATINGS SAYWHEN
-fc = tdfread('../summary.txt');
+p2d = '/Users/froux/Downloads/female_1_rmHumanEmptyTrials_incHumanSummary/';
+fc = tdfread([p2d,'summary.txt']);
+fc.file = 'summary.txt';
+
 %[data,txt,raw] = xlsread('~/froux/chronset/data/SayWhen/manual_ratings_SayWhen.xls');
 %raw(1,:) = [];
 %txt(1,:) = [];
@@ -72,29 +75,30 @@ fc = tdfread('../summary.txt');
 %% SWITCH BETWEEN ORIGINAL AND NEW FEATURE-DATA FORMAT
 switch m
     case 'orig'
-        path2featfiles = './data/noise/';
+        path2featfiles = p2d;
     case 'new'
-        path2featfiles = './data/noise/';
+        path2featfiles = p2d;
 end;
 
 %% FILE IDs
 %ID = {txt{:,3}};
 %trl_n = [raw{:,4}];
 
-ID = fc.file;
+trl_n = 1:size(fc.x03_woubility_u_1157_day20x2Dlanguage_switch_I_sound_recording0,1);
 
+ID = fc.x03_woubility_u_1157_day20x2Dlanguage_switch_I_sound_recording0;
 ID3 = cell(length(ID(:,1)),1);
 
 for i =1:length(ID3)
-    
-    ID3{i} = ID(i,:);
+    ID3(i) = {ID(i,:)};
+    ix = regexp(ID3{i},'.wav');
+    ID3{i}(ix:end) = [];
 end
-
 ID = ID3;
 
-pred = fc.rt;
+pred = fc.x333;
 
-if length(pred) ~= length(ID)
+if length(pred) ~= size(ID,1)
     error('number of files must match');
 end;
 
@@ -108,7 +112,7 @@ for jt = 1:length(ID)
             chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'.mat']);
             [id] = [raw{jt,3},'.',num2str(raw{jt,4}),'.mat']; 
         case 'new'
-            chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'_*Jun-2016.mat']);
+            chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'.mat']);
             %chck = dir([path2featfiles,ID{jt},'.',num2str(trl_n(jt)),'*.mat']);
             if sign(length(chck)-1)==1
                 return;
@@ -117,6 +121,9 @@ for jt = 1:length(ID)
                 d = chck.name([regexp(chck.name,'_')+1:regexp(chck.name,'.mat')-1]);
                 [id] = [raw{jt,3},'.',num2str(raw{jt,4}),'_',d,'.mat'];
             end;
+        case 'Blairtron'
+            chck = dir([path2featfiles,ID{jt},'.mat']);
+            [id] = [ID{jt},'.mat']; 
     end;  
     
     if ~isempty(chck)
@@ -152,6 +159,10 @@ for jt = 1:length(sel_idx)
             id = chck.name;
             d = chck.name([regexp(chck.name,'_')+1:regexp(chck.name,'.mat')-1]);
             id2 = [ID2{jt},'.',num2str(trl_n(jt)),'_',d,'.mat'];
+        case 'Blairtron'
+            chck = dir([path2featfiles,ID{jt},'.mat']);
+            id = chck.name;
+            id2 = id;
     end;
     
     if ~strcmp(id,id2) 
@@ -165,6 +176,8 @@ switch m
         if ~isequal(o1.ID2,ID2) || ~isequal(o1.sel_idx,sel_idx) || ~isequal(o1.ID,ID)
             error('wrong file assignment');
         end;
+    case 'Blairtron'
+        %do nothing
 end;
 %%
 dat = cell(length(ID2),2,2);
@@ -183,6 +196,9 @@ parfor jt = 1:length(ID2)
 %             dat(jt,1,2) = dum.savedata(1,2);
 %             dat(jt,2,1) = dum.savedata(2,1);
 %             dat(jt,2,2) = dum.savedata(2,2);
+        case 'Blairtron'
+            dum =load([path2featfiles,ID2{jt},'.mat']);
+            dat(jt,:,:) = {dum.savedata};
     end;
     
 end;
